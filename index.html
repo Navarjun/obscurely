@@ -33,7 +33,7 @@
                 <button class="btn create-comment">Comment</button>
             </div>
             <hr class="seperator"/>
-            <div class="comments">
+            <div id="comments" class="comments">
                 <div class="comment">
                     <div class="img-div">
                         <img class="profile-img" src="./images/Rob.png" alt=""/>
@@ -66,20 +66,22 @@
                             <button class="btn btn-secondary">&#9650; Upvote</button>
                             <button class="btn btn-secondary">Reply</button>
                         </div>
-                        <div class="comment subcomment">
-                            <div class="img-div">
-                                <img class="profile-img" src="./images/James.png" alt=""/>
-                                <div class="line"></div>
-                            </div>
-                            <div class="comment-content">
-                                <span class="author">James</span>
-                                <span class="time text-muted">• 2 hrs ago</span>
-                                <p class="comment-text">
-                                    Thanks Sophie! Last year has been an absolute goldrush for the creator economy. Slowly at first, then all at once. Will be interesting to see how this ecosystem evolves over the next few years.
-                                </p>
-                                <div class="comment-interaction">
-                                    <button class="btn btn-secondary">&#9650; Upvote</button>
-                                    <button class="btn btn-secondary">Reply</button>
+                        <div class="subcomments">
+                            <div class="comment">
+                                <div class="img-div">
+                                    <img class="profile-img" src="./images/James.png" alt=""/>
+                                    <div class="line"></div>
+                                </div>
+                                <div class="comment-content">
+                                    <span class="author">James</span>
+                                    <span class="time text-muted">• 2 hrs ago</span>
+                                    <p class="comment-text">
+                                        Thanks Sophie! Last year has been an absolute goldrush for the creator economy. Slowly at first, then all at once. Will be interesting to see how this ecosystem evolves over the next few years.
+                                    </p>
+                                    <div class="comment-interaction">
+                                        <button class="btn btn-secondary">&#9650; Upvote</button>
+                                        <button class="btn btn-secondary">Reply</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -105,5 +107,8 @@
             </div>
         </div>
     </div>
+
+    <script src="./scripts/sampleData.js" type="text/javascript"></script>
+    <script src="./scripts/main.js" type="text/javascript"></script>
 </body>
 </html>
