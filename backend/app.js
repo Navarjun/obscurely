@@ -22,7 +22,6 @@ app.use(function(req, res, next) {
         models.user.count()
             .then(count => {
                 const random = Math.floor(Math.random() * count);
-                console.log(random);
                 models.user.findOne({}, {skip: random})
                     .then(user => {
                         console.log('Setting Cookie with User:', user._id.toString());
@@ -51,11 +50,16 @@ app.post('/login', (req, res) => {
 
         models.user.findOne({_id: userId})
             .then(user => {
-                res.cookie('user', userId);
-                res.status(200).send(user);
+                if (user) {
+                    res.cookie('user', userId);
+                    res.status(200).send(user);
+                } else {
+                    res.status(400).send({message: 'Login Failed', description: 'UserId requested doesn\'t exist'});
+                }
             })
             .catch(err => {
-                res.status(400).send({message: 'Login Failed', description: 'UserId requested doesn\'t exist', err: err});
+                console.log(err);
+                res.status(500).send({message: 'Database Error', description: 'Database is facing some issues'})
             })
 });
 
@@ -65,56 +69,55 @@ app.post('/create/:type', (req, res) => {
     let data = req.body;
 
     let userId = req.cookies.user;
-    models.user.findOne({_id: userId})
-        .then(user => {
-            switch (type) {
-                case 'comment':
-                    if (!(data && data.text)) {
-                        res.status(400).send({message: 'Failed to save comment', description: 'Some data might have been missing'})
-                        return;
-                    }
-                    models.comment.create(data)
-                        .then(comment => {
-                            res.status(201).send(comment);
-                        })
-                        .catch(err => {
-                            res.status(400).send({message: 'Failed to save comment', description: 'Some data might have been missing', err: err})
-                        });
-                    break;
-        
-                case 'vote':
-                    if (!(data && data.commentId)) {
-                        res.status(400).send({message: 'Failed to upvote comment', description: 'Some data might have been missing'})
-                        return;
-                    }
-                    let commentId = data.commentId;
-                    models.comment.findOne({_id: commentId})
-                        .then(comment => {
-                            if (comment.votes.filter(uid => userId === uid).length) {
-                                // commnt already upvoted by the user
-                                res.status(200).send(comment);
-                            } else {
-                                models.comment.update(commentId, {$push: {votes: user}})
-                                    .then((updatedComment) => {
-                                        res.status(200).send(updatedComment);
-                                    })
-                                    .catch(err => {
-                                        console.log(err);
-                                        res.status(500).send({message: 'DB Error', description: 'Database had issues saving the vote'});
-                                    })
-                            }
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            res.status(500).send({message: 'DB Error', description: 'Database is facing some issues'});
-                        })
-                    break;
-            }
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).send({message: 'DB Error', description: 'Database is facing some issues'});
-        })
+    if (userId) {
+        switch (type) {
+            case 'comment':
+                if (!(data && data.text)) {
+                    res.status(400).send({message: 'Failed to save comment', description: 'Some data might have been missing'})
+                    return;
+                }
+                data.user = userId;
+                models.comment.create(data)
+                    .then(async (comment) => {
+                        comment = await comment.populate('user');
+                        res.status(201).send(comment);
+                    })
+                    .catch(err => {
+                        res.status(400).send({message: 'Failed to save comment', description: 'Some data might have been missing', err: err})
+                    });
+                break;
+    
+            case 'vote':
+                if (!(data && data.commentId)) {
+                    res.status(400).send({message: 'Failed to upvote comment', description: 'Some data might have been missing'})
+                    return;
+                }
+                let commentId = data.commentId;
+                models.comment.findOne({_id: commentId})
+                    .then(comment => {
+                        if (comment.votes.map(d => d.toString()).indexOf(userId) !== -1) {
+                            // commnt already upvoted by the user
+                            res.status(200).send(comment);
+                        } else {
+                            models.comment.update(commentId, {$push: {votes: userId}})
+                                .then((updatedComment) => {
+                                    res.status(200).send(updatedComment);
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                    res.status(500).send({message: 'DB Error', description: 'Database had issues saving the vote'});
+                                })
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).send({message: 'DB Error', description: 'Database is facing some issues'});
+                    })
+                break;
+        }
+    } else {
+        res.status(400).send({message: 'Failed to save comment', description: 'You must be logged in for this'})
+    }
 });
 
 app.get('/get/:type', (req, res) => {
@@ -167,11 +170,9 @@ app.delete('/delete/:type', (req, res) => {
                             res.status(500).send({message: 'DB Error', description: 'Database is facing some issues'});
                         })
                 } else {
-                    console.log(err);
                     res.status(400).send({message: 'Not logged in', description: 'You need to login to perform this action'});
                 }
             } else {
-                console.log(err);
                 res.status(400).send({message: 'Bad Request', description: 'Comment Id and logged in user required for upvoting'});
             }
             break;

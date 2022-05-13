@@ -6,7 +6,8 @@ const schema = new mongoose.Schema({
     text: String,
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     parent: {
         type: mongoose.Schema.Types.ObjectId,
@@ -25,5 +26,17 @@ const schema = new mongoose.Schema({
 let model = mongoose.model(modelName, schema);
 
 methods(model, schema);
+
+schema.find = function(query) {
+    return new Promise((resolve, reject) => {
+        model.find(query).populate('user')
+            .then(async function(docs) {
+                resolve(docs);
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
+};
 
 module.exports = schema;

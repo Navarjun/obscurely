@@ -43,6 +43,9 @@ button.btn.btn-secondary {
     padding: 0px 5px;
     margin: 0px 5px;
 }
+button.btn.btn-secondary.highlighted {
+    color: #7E34F6;
+}
 button.btn.btn-secondary:hover {
     border-bottom: 0px solid #4B587C;
     color: #7E34F6;

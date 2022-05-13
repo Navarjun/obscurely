@@ -90,4 +90,19 @@ button.create-comment {
 .subcomments .comment {
     margin-bottom: 0px;
 }
+.upvote::before {
+    content: '▲';
+}
+.upvote span {
+    display: none;
+}
+.upvote.highlighted span {
+    display: inline-block;
+}
+.upvote.highlighted:hover::before {
+    content: '▼'
+}
 
+#logged-in-user {
+    cursor: pointer;
+}

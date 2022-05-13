@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const methods = require('./model-methods');
-const modelName = 'Person';
+const modelName = 'User';
 
 const schema = new mongoose.Schema({
     firstName: String,
