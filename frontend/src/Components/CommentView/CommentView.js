@@ -1,14 +1,37 @@
 import './CommentView.scss';
+import { useContext } from 'react'
+import { UserContext } from '../../Helpers/ContextHelper';
 import CommentList from '../CommentList/CommentList';
+import DH from '../../Helpers/DataHelper';
 
 function CommentView(props) {
-    let comment = props.comment;
+    const comment = props.comment;
+    const loggedInUser = useContext(UserContext);
 
-    let repliesChild = null;
+    const repliesChild = null;
     if (comment.replies) {
         repliesChild = <div className="subcomments">
-                <CommentList comments={comment.replies}></CommentList>
+                <CommentList comments={comment.replies}
+                    onVoteChange={props.onVoteChange}></CommentList>
             </div>
+    }
+
+    let upVoteClasses = 'btn btn-secondary upvote';
+    if (loggedInUser && comment.votes.indexOf(loggedInUser.id) !== -1) {
+        upVoteClasses += ' highlighted';
+    }
+
+    const toggleVote = async (e) => {
+        e.preventDefault();
+        if (comment.votes.indexOf(loggedInUser.id) === -1) {
+            // not voted
+            await DH.upvote(comment.id);
+        } else {
+            await DH.removeUpvote(comment.id);
+        }
+        if (props.onVoteChange) {
+            props.onVoteChange(comment);
+        }
     }
 
     return (
@@ -24,7 +47,7 @@ function CommentView(props) {
                     {comment.text}
                 </p>
                 <div className="comment-interaction">
-                    <button className="btn btn-secondary">&#9650; Upvote</button>
+                    <button className={upVoteClasses} onClick={toggleVote}>Upvote</button>
                     <button className="btn btn-secondary">Reply</button>
                 </div>
                 {repliesChild}

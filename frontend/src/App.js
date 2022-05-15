@@ -20,7 +20,7 @@ function App() {
       setComments([...DH.comments]);
   };
 
-  const commentAdded = (comment) => {
+  const commentsUpdated = () => {
     setComments([...DH.comments]);
   };
   const userChanged = () => {
@@ -36,9 +36,11 @@ function App() {
   return (
     <UserContext.Provider value={loggedInUser}>
       <h2>Discussion</h2>
-      <CreateComment onCommentCreated={commentAdded} onUserChange={userChanged}></CreateComment>
+      <CreateComment onCommentCreated={commentsUpdated} onUserChange={userChanged}></CreateComment>
       <hr className="seperator"/>
-      <CommentList comments={[...comments].reverse()}></CommentList>
+      <CommentList
+        comments={[...comments].reverse()}
+        onVoteChange={commentsUpdated}></CommentList>
     </UserContext.Provider>
   );
 }

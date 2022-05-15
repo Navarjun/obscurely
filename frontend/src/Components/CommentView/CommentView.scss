@@ -49,6 +49,7 @@
   }
   .upvote::before {
     content: '▲';
+    margin-right: 4px;
   }
   .upvote span {
     display: none;

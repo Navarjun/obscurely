@@ -8,7 +8,10 @@ function CommentList(props) {
 
     if (comments && comments.length) {
         child = comments.map(comment => {
-            return <CommentView key={comment.id} comment={comment}></CommentView>
+            return <CommentView
+                key={comment.id}
+                comment={comment}
+                onVoteChange={props.onVoteChange}></CommentView>
         });
     }
 
