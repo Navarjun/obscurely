@@ -7,7 +7,7 @@ let proxyRules = new HttpProxyRules({
     rules: {
         '.*/api/': 'http://localhost:3000/'
     },
-    default: 'http://localhost:5500/' // default target, will be landing page
+    default: 'http://localhost:8000/' // default target, will be landing page
 });
 let proxy = httpProxy.createProxy();
 
