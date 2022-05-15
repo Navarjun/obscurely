@@ -1,18 +1,27 @@
 import './CommentView.scss';
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { UserContext } from '../../Helpers/ContextHelper';
+
 import CommentList from '../CommentList/CommentList';
+import CreateComment from '../CreateComment/CreateComment';
 import DH from '../../Helpers/DataHelper';
 
 function CommentView(props) {
+    /**
+     * Expected:
+     * props.comment (required): comment object
+     * props.onCommentChange (optional): callback if a comment changes
+     */
     const comment = props.comment;
     const loggedInUser = useContext(UserContext);
+    const [replyVisible, setReplyVisible] = useState(false);
 
-    const repliesChild = null;
-    if (comment.replies) {
+    let repliesChild = null;
+    let replies = comment.replies;
+    if (replies) {
         repliesChild = <div className="subcomments">
-                <CommentList comments={comment.replies}
-                    onVoteChange={props.onVoteChange}></CommentList>
+                <CommentList comments={[...replies].reverse()}
+                    onCommentChange={props.onCommentChange}></CommentList>
             </div>
     }
 
@@ -29,11 +38,16 @@ function CommentView(props) {
         } else {
             await DH.removeUpvote(comment.id);
         }
-        if (props.onVoteChange) {
-            props.onVoteChange(comment);
+        if (props.onCommentChange) {
+            props.onCommentChange(comment);
         }
     }
 
+    const toggleReplyView = (e) => {
+        e && e.preventDefault();
+        setReplyVisible(!replyVisible);
+    }
+    
     return (
         <div className="comment">
             <div className="img-div">
@@ -47,8 +61,15 @@ function CommentView(props) {
                     {comment.text}
                 </p>
                 <div className="comment-interaction">
-                    <button className={upVoteClasses} onClick={toggleVote}>Upvote</button>
-                    <button className="btn btn-secondary">Reply</button>
+                    <button className={upVoteClasses} onClick={toggleVote}>vote</button>
+                    <button className="btn btn-secondary" onClick={toggleReplyView}>Reply</button>
+                    { replyVisible
+                        ? <CreateComment
+                            parent={comment.id}
+                            onCommentCreated={(comment) => {toggleReplyView(); props.onCommentChange(comment);}}
+                            ></CreateComment>
+                        : null
+                    }
                 </div>
                 {repliesChild}
             </div>

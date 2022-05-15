@@ -1,4 +1,4 @@
-.create-comment {
+.create-comment-div {
     display: flex;
 }
 
@@ -11,6 +11,7 @@ input.comment-input {
     border-radius: 4px;
     margin-left: 12px;
     outline: none;
+    height: 18px;
 }
 
 input.comment:focus, input.comment:focus-visible {

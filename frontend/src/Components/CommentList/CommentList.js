@@ -11,7 +11,7 @@ function CommentList(props) {
             return <CommentView
                 key={comment.id}
                 comment={comment}
-                onVoteChange={props.onVoteChange}></CommentView>
+                onCommentChange={props.onCommentChange}></CommentView>
         });
     }
 

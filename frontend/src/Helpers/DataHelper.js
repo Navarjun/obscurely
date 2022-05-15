@@ -35,6 +35,54 @@ function DataHelper() {
 
     this.loadComments = async() => {
         let comments = await request('GET', 'get/comment');
+        this._organiseComments(comments);
+        return this.comments;
+    }
+
+    this.loadData = async() => {
+        await this.loadUsers();
+        await this.loadComments();
+    }
+
+    this.upvote = async(commentId) => {
+        let comment = await request('POST', 'create/vote', {commentId});
+        if (comment) {
+            this._commentsMap[comment.id].votes = comment.votes;
+        }
+        return comment;
+    }
+    this.removeUpvote = async(commentId) => {
+        let comment = await request('DELETE', 'delete/vote', {commentId});
+        if (comment) {
+            this._commentsMap[comment.id].votes = comment.votes;
+        }
+        return comment;
+    }
+
+    this.addComment = async(text, parent = null) => {
+        let comment = await request('POST', 'create/comment', {text, parent});
+        if (comment) {
+            comment.createdAt = new Date(comment.createdAt);
+            if (!comment.parent) {
+                this.comments.push(comment);
+            } else if (this._commentsMap[comment.parent]) {
+                if(!this._commentsMap[comment.parent].replies) {
+                    this._commentsMap[comment.parent].replies = [];
+                }
+                this._commentsMap[comment.parent].replies.push(comment);
+            }
+        }
+        return comment;
+    }
+
+    this.userFromId = (id) => {
+        return this.users[id];
+    }
+
+    this._organiseComments = (comments) => {
+        if (!comments) {
+            comments = Object.values(this._commentsMap);
+        }
         comments.forEach(comment => {
             comment.createdAt = new Date(comment.createdAt);
             this._commentsMap[comment.id] = comment;
@@ -47,52 +95,9 @@ function DataHelper() {
                 }
                 this._commentsMap[comment.parent].replies.push(comment);
             }
-        })
+        });
+        this.comments = [];
         this.comments = comments.filter(c => !c.parent).sort((a, b) => a.createdAt.valueOf() - b.createdAt.valueOf());
-        return this.comments;
-    }
-
-    this.loadData = async() => {
-        await this.loadUsers();
-        await this.loadComments();
-    }
-
-    this.upvote = async(commentId) => {
-        let comment = await request('POST', 'create/vote', {commentId});
-        if (comment) {
-            this.comments.filter(d => comment.id === d.id)
-                .forEach(d => {
-                    d.votes = comment.votes;
-                });
-        }
-        return comment;
-    }
-    this.removeUpvote = async(commentId) => {
-        let comment = await request('DELETE', 'delete/vote', {commentId});
-        if (comment) {
-            this.comments.filter(d => comment.id === d.id)
-                .forEach(d => {
-                    d.votes = comment.votes;
-                });
-        }
-        return comment;
-    }
-
-    this.addComment = async(text) => {
-        let comment = await request('POST', 'create/comment', {text});
-        if (comment) {
-            comment.createdAt = new Date(comment.createdAt);
-            if (!comment.parent) {
-                this.comments.push(comment);
-            } else if (this._commentsMap[comment.parent]) {
-                this._commentsMap[comment.parent].replies.push(comment);
-            }
-        }
-        return comment;
-    }
-
-    this.userFromId = (id) => {
-        return this.users[id];
     }
 
     return this;

@@ -4,10 +4,11 @@ import { useState, useContext, useRef } from 'react';
 import { UserContext } from '../../Helpers/ContextHelper';
 import DH from '../../Helpers/DataHelper';
 
-function CreateComment(prop) {
+function CreateComment(props) {
     /**
      * Expects:
-     *  prop.onCommentCreated = (newComment) => {}
+     *  props.parent (optional) = commentId
+     *  props.onCommentCreated = (newComment) => {}
      */
     const loggedInUser = useContext(UserContext);
     const [text, setText] = useState('');
@@ -22,24 +23,24 @@ function CreateComment(prop) {
         if (text !== '' && text.trim() !== '') {
             // A loader should be added
             setBtnActive(false);
-            let comment = await DH.addComment(text);
+            let comment = await DH.addComment(text, props.parent);
             setBtnActive(true);
             setText('');
-            if (prop.onCommentCreated) {
-                prop.onCommentCreated(comment);
+            if (props.onCommentCreated) {
+                props.onCommentCreated(comment);
             }
         }
     }
 
     const loginRandomUser = async (e) => {
         await DH.loginWithRandom();
-        if (prop.onUserChange) {
-            prop.onUserChange();
+        if (props.onUserChange) {
+            props.onUserChange();
         }
     }
 
     return (
-        <div className="create-comment">
+        <div className="create-comment-div">
             <img id="logged-in-user" className="profile-img"
                 src={loggedInUser ? `./images/${loggedInUser.profilePic}` : ''}
                 onClick={loginRandomUser}/>

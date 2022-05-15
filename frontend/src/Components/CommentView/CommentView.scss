@@ -1,15 +1,15 @@
 .comment {
     display: flex;
     margin-bottom: 30px;
-  }
-  .comment .img-div {
+}
+.comment .img-div {
     flex-shrink: 0;
-  }
-  .img-div .profile-img {
+}
+.img-div .profile-img {
     position: relative; /*done to make z-index effective*/
     z-index: 2;
-  }
-  .img-div .line {
+}
+.img-div .line {
     display: none;
     width: 2px;
     height: calc(100% - 30px);
@@ -17,46 +17,57 @@
     background: #EAEAEA;
     position: relative;
     top: -10px;
-  }
-  .img-div .line.visible {
+}
+.img-div .line.visible {
     display: block;
-  }
-  
-  .comment-content {
+}
+
+.comment-content {
     margin-left: 12px;
-  }
-  
-  .comment-content .author {
+    width: 100%;
+}
+
+.comment-content .author {
     display: inline-block;
     font-size: 13px;
     font-weight: 600;
-  }
-  .comment-content .time {
+}
+.comment-content .time {
     display: inline-block;
     font-size: 11px;
-  }
-  .comment-text {
+}
+.comment-text {
     font-size: 13px;
     line-height: 20px;
     margin-top: 4px;
-  }
-  .subcomments {
+}
+.subcomments {
     margin-top: 25px;
     margin-bottom: 0px;
-  }
-  .subcomments .comment {
+}
+.subcomments .comment {
     margin-bottom: 0px;
-  }
-  .upvote::before {
-    content: '▲';
-    margin-right: 4px;
-  }
-  .upvote span {
-    display: none;
-  }
-  .upvote.highlighted span {
-    display: inline-block;
-  }
-  .upvote.highlighted:hover::before {
-    content: '▼'
-  }
+}
+.subcomments .comment+.comment {
+    margin-top: 30px;
+}
+.upvote::before {
+    content: '▲ Up';
+}
+.upvote.highlighted::after {
+    content: 'd'
+}
+.upvote.highlighted:hover::before {
+    content: '▼ Down'
+}
+.upvote.highlighted:hover::after {
+    content: ''
+}
+
+.comment .create-comment-div {
+    margin-top: 15px;
+
+    #logged-in-user {
+        cursor: default;
+    }
+}

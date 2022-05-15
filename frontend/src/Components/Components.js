@@ -1,4 +1,4 @@
-import CreateComment from "./CreateComment.js/CreateComment";
+import CreateComment from "./CreateComment/CreateComment";
 import CommentList from "./CommentList/CommentList";
 
 export {

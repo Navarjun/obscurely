@@ -40,7 +40,7 @@ function App() {
       <hr className="seperator"/>
       <CommentList
         comments={[...comments].reverse()}
-        onVoteChange={commentsUpdated}></CommentList>
+        onCommentChange={commentsUpdated}></CommentList>
     </UserContext.Provider>
   );
 }
