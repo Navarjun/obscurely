@@ -2,12 +2,23 @@ const baseUrl = '/api/';
 
 function DataHelper() {
 
-    this.loggedInUser = () => getCookie('user');
+    this.loggedInUser = () => {
+        let cookie = getCookie('user');
+        if (cookie && this.users[cookie]) {
+            return this.users[cookie];
+        }
+        return null;
+    }
     this.users = {};
     this.comments = [];
+    this._commentsMap = {};
     
     this.loginWithRandom = async() => {
         let userIds = Object.keys(this.users);
+        if (!userIds.length) {
+            await this.loadUsers();
+            userIds = Object.keys(this.users);
+        }
         let random = Math.floor(Math.random() * userIds.length);
         let user = await request('POST', 'login', {userId: userIds[random]});
         return user;
@@ -24,10 +35,21 @@ function DataHelper() {
 
     this.loadComments = async() => {
         let comments = await request('GET', 'get/comment');
-        this.comments = comments.map(comment => {
+        comments.forEach(comment => {
             comment.createdAt = new Date(comment.createdAt);
-            return comment;
+            this._commentsMap[comment.id] = comment;
         });
+        // Ideally this should happen on the backend in a DB Query
+        comments.map(comment => {
+            if (comment.parent) {
+                if (!this._commentsMap[comment.parent].replies) {
+                    this._commentsMap[comment.parent].replies = [];
+                }
+                this._commentsMap[comment.parent].replies.push(comment);
+            }
+        })
+        this.comments = comments.filter(c => !c.parent).sort((a, b) => a.createdAt.valueOf() - b.createdAt.valueOf());
+        return this.comments;
     }
 
     this.loadData = async() => {
@@ -60,7 +82,11 @@ function DataHelper() {
         let comment = await request('POST', 'create/comment', {text});
         if (comment) {
             comment.createdAt = new Date(comment.createdAt);
-            this.comments.push(comment);
+            if (!comment.parent) {
+                this.comments.push(comment);
+            } else if (this._commentsMap[comment.parent]) {
+                this._commentsMap[comment.parent].replies.push(comment);
+            }
         }
         return comment;
     }
@@ -105,4 +131,7 @@ function getCookie(cname) {
       }
     }
     return "";
-  }
+}
+
+const DH = new DataHelper();
+export default DH;

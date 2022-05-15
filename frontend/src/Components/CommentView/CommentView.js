@@ -5,9 +5,9 @@ function CommentView(props) {
     let comment = props.comment;
 
     let repliesChild = null;
-    if (comment.children) {
+    if (comment.replies) {
         repliesChild = <div className="subcomments">
-                <CommentList comments={comment.children}></CommentList>
+                <CommentList comments={comment.replies}></CommentList>
             </div>
     }
 

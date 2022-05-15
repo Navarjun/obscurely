@@ -29,10 +29,20 @@ button.btn {
     height: 30px;
     cursor: pointer;
     transition: background 0.2s;
+
+    &:hover {
+        background: #5E24D6;
+    }
+
+    &:disabled {
+        cursor: default;
+        opacity: 0.7;
+    }
+    &:disabled:hover {
+        background: #7E34F6;
+    }
 }
-button.btn:hover {
-    background: #5E24D6;
-}
+    
 
 button.btn.btn-secondary {
     font-size: 11px;
