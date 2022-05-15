@@ -1,10 +1,18 @@
 .article {
   margin-top: 50px;
+  .content {
+    line-height: 1.6em;
+  }
+  blockquote {
+    font-weight: 700;
+    font-size: 1.4em;
+    text-align: center;
+  }
+  a {
+    color: #7E34F6;
+  }
 }
 
-.article .content {
-  line-height: 1.6em;
-}
 
 .discussion {
   margin-top: 50px;
