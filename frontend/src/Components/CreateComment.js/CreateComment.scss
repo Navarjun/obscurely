@@ -1,0 +1,26 @@
+.create-comment {
+    display: flex;
+}
+
+input.comment-input {
+    flex-grow: 1;
+    font-size: 11px;
+    padding: 6px 10px;
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 4px;
+    margin-left: 12px;
+    outline: none;
+}
+
+input.comment:focus, input.comment:focus-visible {
+    border-color: #7E34F6;
+}
+
+button.create-comment {
+    margin-left: 12px;
+}
+
+#logged-in-user {
+    cursor: pointer;
+}
